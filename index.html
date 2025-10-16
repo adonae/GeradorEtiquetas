@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gerador de Etiquetas - O Sebo Cultural</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 80mm;
+      margin: auto;
+      padding: 10px;
+    }
+
+    img {
+      display: block;
+      margin: 0 auto 8px auto;
+      max-width: 90px;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 8px;
+    }
+
+    input {
+      width: 100%;
+      padding: 5px;
+      margin-top: 4px;
+      box-sizing: border-box;
+      font-size: 14px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 8px;
+    }
+
+    button {
+      margin-top: 15px;
+      width: 100%;
+      padding: 8px;
+      background-color: #333;
+      color: #fff;
+      border: none;
+      cursor: pointer;
+      font-size: 14px;
+    }
+
+    button:hover {
+      background-color: #555;
+    }
+
+    .etiqueta {
+      display: none;
+      font-size: 13px;
+      line-height: 1.4;
+    }
+
+    .etiqueta p {
+      margin: 2px 0;
+    }
+
+    /* ===== Modo de Impressão ===== */
+    @media print {
+      body {
+        max-width: 80mm;
+        margin: 0;
+        padding: 0;
+      }
+      .formulario, button, h1 {
+        display: none !important;
+      }
+      .etiqueta {
+        display: block;
+        padding: 4px 6px;
+      }
+      img {
+        margin-bottom: 4px;
+      }
+      @page {
+        size: auto; /* ajusta automaticamente ao conteúdo */
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+  <img src="/logoosebocultural.jpg" alt="Logo da Empresa" />
+  <h1 style="text-align:center; font-size:18px;">Gerador de Etiquetas</h1>
+
+  <div class="formulario">
+    <label>Status do Pedido:</label>
+    <div class="checkbox-group">
+      <label><input type="radio" name="status" value="pago" checked> Pedido Pago</label>
+      <label><input type="radio" name="status" value="nao_pago"> Pedido Não Pago</label>
+    </div>
+
+    <div id="campo-reserva" style="display:none;">
+      <label>Número da Reserva:</label>
+      <input type="text" id="reserva" placeholder="Digite o número da reserva">
+    </div>
+
+    <label>Número do Pedido:</label>
+    <input type="text" id="pedido" placeholder="Digite o número do pedido">
+
+    <label>Local de Retirada:</label>
+    <div class="checkbox-group">
+      <label><input type="radio" name="local" value="Centro" checked> Centro</label>
+      <label><input type="radio" name="local" value="Bancários"> Bancários</label>
+      <label><input type="radio" name="local" value="Manaíra"> Manaíra</label>
+    </div>
+
+    <label>Nome do Cliente:</label>
+    <input type="text" id="cliente" placeholder="Digite o nome do cliente">
+
+    <label>Telefone:</label>
+    <input type="text" id="telefone" placeholder="(DDD) 9XXXX-XXXX">
+
+    <label>Data Limite para Retirada:</label>
+    <input type="text" id="data-limite" readonly>
+
+    <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
+  </div>
+
+  <div class="etiqueta" id="etiqueta"></div>
+
+  <script>
+    const radiosStatus = document.getElementsByName("status");
+    const campoReserva = document.getElementById("campo-reserva");
+    const dataLimiteInput = document.getElementById("data-limite");
+
+    function calcularDataLimite(status) {
+      const hoje = new Date();
+      if (status === "pago") {
+        hoje.setDate(hoje.getDate() + 60);
+      } else {
+        let diasUteis = 0;
+        while (diasUteis < 5) {
+          hoje.setDate(hoje.getDate() + 1);
+          if (hoje.getDay() !== 0 && hoje.getDay() !== 6) diasUteis++;
+        }
+      }
+      return hoje.toLocaleDateString("pt-BR");
+    }
+
+    function atualizarStatus() {
+      const status = document.querySelector('input[name="status"]:checked').value;
+      campoReserva.style.display = status === "nao_pago" ? "block" : "none";
+      dataLimiteInput.value = calcularDataLimite(status);
+    }
+
+    radiosStatus.forEach(r => r.addEventListener("change", atualizarStatus));
+    atualizarStatus();
+
+    function gerarEtiqueta() {
+      const status = document.querySelector('input[name="status"]:checked').value;
+      const reserva = document.getElementById("reserva").value.trim();
+      const pedido = document.getElementById("pedido").value.trim();
+      const local = document.querySelector('input[name="local"]:checked').value;
+      const cliente = document.getElementById("cliente").value.trim();
+      const telefone = document.getElementById("telefone").value.trim();
+      const dataLimite = document.getElementById("data-limite").value;
+
+      let etiquetaHTML = `
+        <img src="logo.png" alt="Logo da Empresa" style="max-width:80px; margin:auto; display:block;">
+        <p><strong>Status:</strong> ${status === "pago" ? "Pedido Pago" : "Pedido Não Pago"}</p>
+      `;
+      if (status === "nao_pago" && reserva) {
+        etiquetaHTML += `<p><strong>Reserva:</strong> ${reserva}</p>`;
+      }
+      etiquetaHTML += `
+        <p><strong>Pedido:</strong> ${pedido}</p>
+        <p><strong>Local:</strong> ${local}</p>
+        <p><strong>Cliente:</strong> ${cliente}</p>
+        <p><strong>Telefone:</strong> ${telefone}</p>
+        <p><strong>Data Limite:</strong> ${dataLimite}</p>
+      `;
+
+      const etiquetaDiv = document.getElementById("etiqueta");
+      etiquetaDiv.innerHTML = etiquetaHTML;
+      etiquetaDiv.style.display = "block";
+
+      window.print();
+    }
+  </script>
+</body>
+</html>
