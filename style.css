@@ -1,0 +1,93 @@
+body {
+  font-family: Arial, sans-serif;
+  max-width: 80mm;
+  margin: auto;
+  padding: 10px;
+  background-color: #F5F5F0;
+}
+
+img {
+  display: block;
+  margin: 0 auto 8px auto;
+  max-width: 90px;
+}
+
+label {
+  font-weight: bold;
+  display: block;
+  margin-top: 8px;
+}
+
+input {
+  width: 100%;
+  padding: 5px;
+  margin-top: 4px;
+  box-sizing: border-box;
+  font-size: 14px;
+}
+
+.checkbox-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center; /* <-- centraliza verticalmente */
+  margin-top: 8px;
+}
+
+.checkbox-group label {
+  display: flex;
+  align-items: center; /* garante alinhamento interno */
+  gap: 4px; /* pequeno espaço entre a bolinha e o texto */
+  font-weight: normal;
+  font-size: 14px;
+  white-space: nowrap;
+}
+
+button {
+  margin-top: 15px;
+  width: 100%;
+  padding: 8px;
+  background-color: #dd0303;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button:hover {
+  background-color: #ff3f33;
+}
+
+.etiqueta {
+  display: none;
+  font-size: 13px;
+  line-height: 1.4;
+}
+
+.etiqueta p {
+  margin: 2px 0;
+}
+
+/* ===== Modo de Impressão ===== */
+@media print {
+  body {
+    max-width: 80mm;
+    margin: 0;
+    padding: 0;
+  }
+  .formulario,
+  button,
+  h1 {
+    display: none !important;
+  }
+  .etiqueta {
+    display: block;
+    padding: 4px 6px;
+  }
+  img {
+    margin-bottom: 4px;
+  }
+  @page {
+    size: auto; /* ajusta automaticamente ao conteúdo */
+    margin: 0;
+  }
+}
