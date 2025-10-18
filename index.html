@@ -3,13 +3,15 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="icon" href="./logoosebocultural.jpg" type="image/x-icon" />
     <link rel="stylesheet" href="./style.css" />
     <title>Gerador de Etiquetas - O Sebo Cultural</title>
   </head>
   <body>
-    <img src="./logoosebocultural.jpg" />
-    <h1>Gerador de Etiquetas</h1>
+    <img
+      src="./logoosebocultural.jpg"
+      alt="Logo O Sebo Cultural"
+      class="logo-topo"
+    />
 
     <div class="formulario">
       <label>Status do Pedido:</label>
@@ -60,10 +62,12 @@
       <label>Data Limite para Retirada:</label>
       <input type="text" id="data-limite" readonly />
 
-      <button onclick="gerarEtiqueta()">Gerar Etiqueta</button>
+      <button onclick="imprimirEtiqueta()">Gerar Etiqueta</button>
     </div>
 
     <div class="etiqueta" id="etiqueta"></div>
-    <script src="./script.js"></script>
+
+    <!-- Script externo -->
+    <script src="script.js"></script>
   </body>
 </html>

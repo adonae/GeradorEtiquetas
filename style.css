@@ -3,12 +3,6 @@ body {
   max-width: 80mm;
   margin: auto;
   padding: 10px;
-  background-color: #F5F5F0;
-}
-
-h1 {
-    text-align: center;
-    font-size: 18px;
 }
 
 img {
@@ -23,7 +17,7 @@ label {
   margin-top: 8px;
 }
 
-input {
+input[type="text"] {
   width: 100%;
   padding: 5px;
   margin-top: 4px;
@@ -31,35 +25,62 @@ input {
   font-size: 14px;
 }
 
+/* Grupo de seleções */
 .checkbox-group {
   display: flex;
   justify-content: space-between;
-  align-items: center; /* <-- centraliza verticalmente */
+  align-items: center;
   margin-top: 8px;
 }
 
 .checkbox-group label {
   display: flex;
-  align-items: center; /* garante alinhamento interno */
-  gap: 4px; /* pequeno espaço entre a bolinha e o texto */
-  font-weight: normal;
+  align-items: center;
+  gap: 6px;
   font-size: 14px;
   white-space: nowrap;
+  font-weight: normal;
+}
+
+/* Quadradinhos personalizados */
+input[type="radio"] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #555;
+  border-radius: 3px;
+  display: inline-block;
+  position: relative;
+  cursor: pointer;
+  background-color: white;
+  transition: all 0.2s ease-in-out;
+}
+
+input[type="radio"]:checked {
+  background-color: #007bff;
+  border-color: #007bff;
+}
+
+input[type="radio"]:hover {
+  border-color: #007bff;
 }
 
 button {
   margin-top: 15px;
   width: 100%;
   padding: 8px;
-  background-color: #dd0303;
+  background-color: #333;
   color: #fff;
   border: none;
   cursor: pointer;
   font-size: 14px;
+  border-radius: 4px;
 }
 
 button:hover {
-  background-color: #ff3f33;
+  background-color: #555;
 }
 
 .etiqueta {
@@ -70,6 +91,19 @@ button:hover {
 
 .etiqueta p {
   margin: 2px 0;
+}
+
+.logo-topo {
+  display: block;
+  margin: 0 auto 8px auto;
+  max-width: 90px;
+}
+
+/* Esconde a logo do topo durante a impressão */
+@media print {
+  .logo-topo {
+    display: none !important;
+  }
 }
 
 /* ===== Modo de Impressão ===== */
@@ -92,7 +126,7 @@ button:hover {
     margin-bottom: 4px;
   }
   @page {
-    size: auto; /* ajusta automaticamente ao conteúdo */
+    size: auto;
     margin: 0;
   }
 }
