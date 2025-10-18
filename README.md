@@ -35,24 +35,7 @@ Não pago: campo livre para digitar a data manualmente
 ✅ Totalmente compatível com Chrome, Edge e Firefox
 
 
-⚙️ Como usar
-
-Faça o download ou clone este repositório:
-
-git clone https://github.com/seuusuario/gerador-etiquetas.git
-
-Coloque sua logo na pasta do projeto com o nome:
-
-logoosebocultural.jpg
-
-Abra o arquivo index.html diretamente no navegador (Chrome ou Edge recomendados).
-
-Preencha os campos e clique em “Gerar Etiqueta”.
-
-A etiqueta será exibida automaticamente e enviada para impressão — depois da impressão, o formulário é limpo para o próximo pedido.
-
-
-🖨️ Configuração de impressão recomendada
+🖨️ Configuração de impressão utilizada
 
 Impressora: Elgin i8 (ou outra térmica 80 mm)
 
@@ -61,8 +44,6 @@ Tamanho da página: Automático ou personalizado (80 mm de largura)
 Margens: Nenhuma
 
 Cabeçalho/Rodapé: Desativado
-
-Dica: salve o modelo de impressão no navegador como “Etiqueta - Elgin i8” para reaproveitar facilmente.
 
 
 💡 Possíveis melhorias futuras
