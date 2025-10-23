@@ -125,7 +125,7 @@ button:hover {
   .etiqueta {
     display: block;
     padding: 2mm 4mm 2mm 6mm; /* Recuo adicional à esquerda */
-    font-size: 13px;
+    font-size: 20px;
     line-height: 1.4;
     word-wrap: break-word;
   }
