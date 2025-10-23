@@ -1,7 +1,6 @@
 🧾 Gerador de Etiquetas - O Sebo Cultural
 
-Um sistema simples e eficiente para gerar etiquetas personalizadas de pedidos, desenvolvido para uso com impressoras térmicas Elgin i8 (largura 80 mm).
-
+Um sistema simples e eficiente para gerar etiquetas personalizadas de pedidos, desenvolvido para uso com impressoras térmicas.
 Criado para agilizar o processo de retirada de pedidos e organização de encomendas.
 
 
