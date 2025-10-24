@@ -29,9 +29,30 @@ function atualizarStatus() {
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
   }
+
+  atualizarCanal(); // atualiza visibilidade conforme canal
+}
+
+function atualizarCanal() {
+  const status = document.querySelector('input[name="status"]:checked').value;
+  const canalSelecionado = document.querySelector('input[name="canal"]:checked');
+  const canal = canalSelecionado ? canalSelecionado.value : "";
+
+  // Se o status for "não pago" e o canal for "Site", mostrar número do pedido
+  if (status === "nao_pago" && canal === "Site") {
+    campoPedido.style.display = "block";
+  } else if (status === "nao_pago") {
+    campoPedido.style.display = "none";
+  }
 }
 
 radiosStatus.forEach((r) => r.addEventListener("change", atualizarStatus));
+
+// adiciona listener a todos os canais de atendimento
+document.querySelectorAll('input[name="canal"]').forEach((canalRadio) => {
+  canalRadio.addEventListener("change", atualizarCanal);
+});
+
 atualizarStatus();
 
 function gerarEtiquetaHTML() {
@@ -57,9 +78,11 @@ function gerarEtiquetaHTML() {
     etiquetaHTML += `<p><strong>Reserva:</strong> ${reserva}</p>`;
   }
 
-  if (status === "pago") {
+  if (status === "pago" || (status === "nao_pago" && canal === "Site")) {
     etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido}</p>`;
-  } else {
+  }
+
+  if (status === "nao_pago") {
     etiquetaHTML += `<p><strong>Canal:</strong> ${canal}</p>`;
   }
 
@@ -86,6 +109,7 @@ function imprimirEtiqueta() {
   setTimeout(() => {
     document.querySelector('input[name="status"][value="pago"]').checked = true;
     document.querySelector('input[name="local"][value="Centro"]').checked = true;
+    document.querySelector('input[name="canal"][value="Site"]').checked = true;
 
     ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
       const el = document.getElementById(id);

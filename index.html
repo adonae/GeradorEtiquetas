@@ -4,7 +4,11 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
-    <link rel="shortcut icon" href="./logoosebocultural.jpg" type="image/x-icon">
+    <link
+      rel="shortcut icon"
+      href="./logoosebocultural.jpg"
+      type="image/x-icon"
+    />
     <title>Gerador de Etiquetas - O Sebo Cultural</title>
   </head>
   <body>
@@ -15,51 +19,85 @@
     />
 
     <div class="formulario">
-  <label>Status do Pedido:</label>
-  <div class="checkbox-group">
-    <label><input type="radio" name="status" value="pago" checked /> Pedido Pago</label>
-    <label><input type="radio" name="status" value="nao_pago" /> Pedido Não Pago</label>
-  </div>
+      <label>Status do Pedido:</label>
+      <div class="checkbox-group">
+        <label
+          ><input type="radio" name="status" value="pago" checked /> Pedido
+          Pago</label
+        >
+        <label
+          ><input type="radio" name="status" value="nao_pago" /> Pedido Não
+          Pago</label
+        >
+      </div>
 
-  <div id="campo-reserva" style="display: none">
-    <label>Número da Reserva:</label>
-    <input type="text" id="reserva" placeholder="Digite o número da reserva" />
-  </div>
+      <div id="campo-reserva" style="display: none">
+        <label>Número da Reserva:</label>
+        <input
+          type="text"
+          id="reserva"
+          placeholder="Digite o número da reserva"
+        />
+      </div>
 
-  <!-- Campo do número do pedido -->
-  <div id="campo-pedido">
-    <label>Número do Pedido:</label>
-    <input type="text" id="pedido" placeholder="Digite o número do pedido" />
-  </div>
+      <!-- Campo do número do pedido -->
+      <div id="campo-pedido">
+        <label>Número do Pedido:</label>
+        <input
+          type="text"
+          id="pedido"
+          placeholder="Digite o número do pedido"
+        />
+      </div>
 
-  <!-- Novo campo: Canal de Atendimento -->
-  <div id="campo-canal" style="display: none">
-    <label>Canal de Atendimento:</label>
-    <div class="checkbox-group">
-      <label><input type="radio" name="canal" value="Balcão" checked /> Balcão</label>
-      <label><input type="radio" name="canal" value="Whatsapp" /> Whatsapp</label>
-      <label><input type="radio" name="canal" value="Telefone" /> Telefone</label>
+      <!-- Canal de Atendimento -->
+      <div id="campo-canal" style="display: none">
+        <label>Canal de Atendimento:</label>
+        <div class="checkbox-group">
+          <label
+            ><input type="radio" name="canal" value="Balcão" checked /> Balcão</label
+          >
+          <label
+            ><input type="radio" name="canal" value="Site" />
+            Site</label
+          >
+          <label
+            ><input type="radio" name="canal" value="Whatsapp" />
+            Whatsapp</label
+          >
+          <label
+            ><input type="radio" name="canal" value="Telefone" />
+            Telefone</label
+          >
+        </div>
+      </div>
+
+      <label>Local de Retirada:</label>
+      <div class="checkbox-group">
+        <label
+          ><input type="radio" name="local" value="Centro" checked />
+          Centro</label
+        >
+        <label
+          ><input type="radio" name="local" value="Bancários" />
+          Bancários</label
+        >
+        <label
+          ><input type="radio" name="local" value="Manaíra" /> Manaíra</label
+        >
+      </div>
+
+      <label>Nome do Cliente:</label>
+      <input type="text" id="cliente" placeholder="Digite o nome do cliente" />
+
+      <label>Telefone:</label>
+      <input type="text" id="telefone" placeholder="(DDD) 9XXXX-XXXX" />
+
+      <label>Data Limite para Retirada:</label>
+      <input type="text" id="data-limite" readonly />
+
+      <button onclick="imprimirEtiqueta()">Gerar Etiqueta</button>
     </div>
-  </div>
-
-  <label>Local de Retirada:</label>
-  <div class="checkbox-group">
-    <label><input type="radio" name="local" value="Centro" checked /> Centro</label>
-    <label><input type="radio" name="local" value="Bancários" /> Bancários</label>
-    <label><input type="radio" name="local" value="Manaíra" /> Manaíra</label>
-  </div>
-
-  <label>Nome do Cliente:</label>
-  <input type="text" id="cliente" placeholder="Digite o nome do cliente" />
-
-  <label>Telefone:</label>
-  <input type="text" id="telefone" placeholder="(DDD) 9XXXX-XXXX" />
-
-  <label>Data Limite para Retirada:</label>
-  <input type="text" id="data-limite" readonly />
-
-  <button onclick="imprimirEtiqueta()">Gerar Etiqueta</button>
-</div>
     <div class="etiqueta" id="etiqueta"></div>
 
     <!-- Script externo -->
