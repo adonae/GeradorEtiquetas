@@ -15,22 +15,29 @@ function calcularDataLimite(status) {
 
 function atualizarStatus() {
   const status = document.querySelector('input[name="status"]:checked').value;
-  const campoReservaVisivel = status === "nao_pago";
 
-  campoReserva.style.display = campoReservaVisivel ? "block" : "none";
-  campoPedido.style.display = status === "pago" ? "block" : "none";
-  campoCanal.style.display = status === "nao_pago" ? "block" : "none";
-
+  // Controla visibilidade dos campos
   if (status === "pago") {
+    campoReserva.style.display = "none";
+    campoCanal.style.display = "none";
+    campoPedido.style.display = "block";
     dataLimiteInput.value = calcularDataLimite(status);
     dataLimiteInput.readOnly = true;
-  } else {
+  } else if (status === "nao_pago") {
+    campoReserva.style.display = "block";
+    campoCanal.style.display = "block";
+    dataLimiteInput.value = "";
+    dataLimiteInput.readOnly = false;
+    dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
+    atualizarCanal();
+  } else if (status === "ev_amazon") {
+    campoReserva.style.display = "block";
+    campoCanal.style.display = "none";
+    campoPedido.style.display = "block";
     dataLimiteInput.value = "";
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
   }
-
-  atualizarCanal(); // atualiza visibilidade conforme canal
 }
 
 function atualizarCanal() {
@@ -38,7 +45,6 @@ function atualizarCanal() {
   const canalSelecionado = document.querySelector('input[name="canal"]:checked');
   const canal = canalSelecionado ? canalSelecionado.value : "";
 
-  // Se o status for "não pago" e o canal for "Site", mostrar número do pedido
   if (status === "nao_pago" && canal === "Site") {
     campoPedido.style.display = "block";
   } else if (status === "nao_pago") {
@@ -48,7 +54,6 @@ function atualizarCanal() {
 
 radiosStatus.forEach((r) => r.addEventListener("change", atualizarStatus));
 
-// adiciona listener a todos os canais de atendimento
 document.querySelectorAll('input[name="canal"]').forEach((canalRadio) => {
   canalRadio.addEventListener("change", atualizarCanal);
 });
@@ -70,15 +75,23 @@ function gerarEtiquetaHTML() {
   let etiquetaHTML = `
       <img src="./logoosebocultural.jpg" style="max-width:80px; margin:auto; display:block;">
       <p><strong>Status:</strong> ${
-        status === "pago" ? "Pedido Pago" : "Pedido Não Pago"
+        status === "pago"
+          ? "Pedido Pago"
+          : status === "nao_pago"
+          ? "Pedido Não Pago"
+          : "Pedido EV/Amazon"
       }</p>
     `;
 
-  if (status === "nao_pago" && reserva) {
+  if (reserva && (status === "nao_pago" || status === "ev_amazon")) {
     etiquetaHTML += `<p><strong>Reserva:</strong> ${reserva}</p>`;
   }
 
-  if (status === "pago" || (status === "nao_pago" && canal === "Site")) {
+  if (
+    status === "pago" ||
+    (status === "nao_pago" && canal === "Site") ||
+    status === "ev_amazon"
+  ) {
     etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido}</p>`;
   }
 
@@ -86,8 +99,12 @@ function gerarEtiquetaHTML() {
     etiquetaHTML += `<p><strong>Canal:</strong> ${canal}</p>`;
   }
 
+  // Exibe o local apenas se não for EV/Amazon
+  if (status !== "ev_amazon") {
+    etiquetaHTML += `<p><strong>Local:</strong> ${local}</p>`;
+  }
+
   etiquetaHTML += `
-      <p><strong>Local:</strong> ${local}</p>
       <p><strong>Cliente:</strong> ${cliente}</p>
       <p><strong>Telefone:</strong> ${telefone}</p>
       <p><strong>Data Limite:</strong> ${dataLimite || "-"}</p>

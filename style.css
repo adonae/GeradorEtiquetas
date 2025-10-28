@@ -99,6 +99,19 @@ button:hover {
   max-width: 90px;
 }
 
+/* ===== Estilo exclusivo para o grupo de status ===== */
+.status-group {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 4px;
+}
+
+.status-group .linha-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 /* Esconde a logo do topo durante a impressão */
 @media print {
   .logo-topo {

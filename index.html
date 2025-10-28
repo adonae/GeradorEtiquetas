@@ -20,15 +20,23 @@
 
     <div class="formulario">
       <label>Status do Pedido:</label>
-      <div class="checkbox-group">
-        <label
-          ><input type="radio" name="status" value="pago" checked /> Pedido
-          Pago</label
-        >
-        <label
-          ><input type="radio" name="status" value="nao_pago" /> Pedido Não
-          Pago</label
-        >
+      <div class="checkbox-group status-group">
+        <div class="linha-status">
+          <label
+            ><input type="radio" name="status" value="pago" checked /> Pedido
+            Pago</label
+          >
+          <label
+            ><input type="radio" name="status" value="nao_pago" /> Pedido Não
+            Pago</label
+          >
+        </div>
+        <div class="linha-status">
+          <label
+            ><input type="radio" name="status" value="ev_amazon" /> Pedido
+            EV/Amazon</label
+          >
+        </div>
       </div>
 
       <div id="campo-reserva" style="display: none">
@@ -55,12 +63,10 @@
         <label>Canal de Atendimento:</label>
         <div class="checkbox-group">
           <label
-            ><input type="radio" name="canal" value="Balcão" checked /> Balcão</label
+            ><input type="radio" name="canal" value="Balcão" checked />
+            Balcão</label
           >
-          <label
-            ><input type="radio" name="canal" value="Site" />
-            Site</label
-          >
+          <label><input type="radio" name="canal" value="Site" /> Site</label>
           <label
             ><input type="radio" name="canal" value="Whatsapp" />
             Whatsapp</label
