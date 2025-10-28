@@ -4,6 +4,16 @@ const campoPedido = document.getElementById("campo-pedido");
 const campoCanal = document.getElementById("campo-canal");
 const dataLimiteInput = document.getElementById("data-limite");
 
+// Campos para controle de visibilidade
+const inputCliente = document.getElementById("cliente");
+const labelCliente = document.querySelector('label[for="cliente"]');
+const inputTelefone = document.getElementById("telefone");
+const labelTelefone = document.querySelector('label[for="telefone"]');
+const grupoLocal = document
+  .querySelectorAll('input[name="local"]')[0]
+  ?.closest(".checkbox-group");
+const labelLocal = document.querySelector('label:has(input[name="local"])');
+
 function calcularDataLimite(status) {
   const hoje = new Date();
   if (status === "pago") {
@@ -16,16 +26,20 @@ function calcularDataLimite(status) {
 function atualizarStatus() {
   const status = document.querySelector('input[name="status"]:checked').value;
 
-  // Controla visibilidade dos campos
   if (status === "pago") {
     campoReserva.style.display = "none";
     campoCanal.style.display = "none";
     campoPedido.style.display = "block";
+    mostrarCamposCliente(true);
+    mostrarCampoLocal(true);
     dataLimiteInput.value = calcularDataLimite(status);
     dataLimiteInput.readOnly = true;
   } else if (status === "nao_pago") {
     campoReserva.style.display = "block";
     campoCanal.style.display = "block";
+    campoPedido.style.display = "none";
+    mostrarCamposCliente(true);
+    mostrarCampoLocal(true);
     dataLimiteInput.value = "";
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
@@ -34,15 +48,31 @@ function atualizarStatus() {
     campoReserva.style.display = "block";
     campoCanal.style.display = "none";
     campoPedido.style.display = "block";
+    mostrarCamposCliente(false);
+    mostrarCampoLocal(true);
     dataLimiteInput.value = "";
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
   }
 }
 
+function mostrarCamposCliente(visible) {
+  inputCliente.style.display = visible ? "block" : "none";
+  inputTelefone.style.display = visible ? "block" : "none";
+  if (labelCliente) labelCliente.style.display = visible ? "block" : "none";
+  if (labelTelefone) labelTelefone.style.display = visible ? "block" : "none";
+}
+
+function mostrarCampoLocal(visible) {
+  if (grupoLocal) grupoLocal.style.display = visible ? "flex" : "none";
+  if (labelLocal) labelLocal.style.display = visible ? "block" : "none";
+}
+
 function atualizarCanal() {
   const status = document.querySelector('input[name="status"]:checked').value;
-  const canalSelecionado = document.querySelector('input[name="canal"]:checked');
+  const canalSelecionado = document.querySelector(
+    'input[name="canal"]:checked'
+  );
   const canal = canalSelecionado ? canalSelecionado.value : "";
 
   if (status === "nao_pago" && canal === "Site") {
@@ -53,11 +83,9 @@ function atualizarCanal() {
 }
 
 radiosStatus.forEach((r) => r.addEventListener("change", atualizarStatus));
-
-document.querySelectorAll('input[name="canal"]').forEach((canalRadio) => {
-  canalRadio.addEventListener("change", atualizarCanal);
-});
-
+document
+  .querySelectorAll('input[name="canal"]')
+  .forEach((c) => c.addEventListener("change", atualizarCanal));
 atualizarStatus();
 
 function gerarEtiquetaHTML() {
@@ -99,17 +127,16 @@ function gerarEtiquetaHTML() {
     etiquetaHTML += `<p><strong>Canal:</strong> ${canal}</p>`;
   }
 
-  // Exibe o local apenas se não for EV/Amazon
-  if (status !== "ev_amazon") {
-    etiquetaHTML += `<p><strong>Local:</strong> ${local}</p>`;
-  }
+  etiquetaHTML += `<p><strong>Local:</strong> ${local}</p>`;
 
-  etiquetaHTML += `
+  if (status !== "ev_amazon") {
+    etiquetaHTML += `
       <p><strong>Cliente:</strong> ${cliente}</p>
       <p><strong>Telefone:</strong> ${telefone}</p>
-      <p><strong>Data Limite:</strong> ${dataLimite || "-"}</p>
     `;
+  }
 
+  etiquetaHTML += `<p><strong>Data Limite:</strong> ${dataLimite || "-"}</p>`;
   return etiquetaHTML;
 }
 
@@ -125,7 +152,9 @@ function imprimirEtiqueta() {
 
   setTimeout(() => {
     document.querySelector('input[name="status"][value="pago"]').checked = true;
-    document.querySelector('input[name="local"][value="Centro"]').checked = true;
+    document.querySelector(
+      'input[name="local"][value="Centro"]'
+    ).checked = true;
     document.querySelector('input[name="canal"][value="Site"]').checked = true;
 
     ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
