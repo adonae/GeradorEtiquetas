@@ -1,76 +1,107 @@
-# 🏷️ Gerador de Etiquetas
+# 🏷️ Gerador de Etiquetas - O Sebo Cultural
 
-Sistema simples e eficiente para geração e impressão de etiquetas de pedidos, desenvolvido especialmente para o **O Sebo Cultural**.  
-Permite gerar etiquetas de forma rápida para pedidos **pagos** e **não pagos**, com informações personalizadas do cliente e local de retirada.
-
----
-
-## 🚀 Funcionalidades
-
-- Seleção de **status do pedido**:
-  - 🟢 **Pedido Pago** → exibe campo de *Número do Pedido* e preenche automaticamente a *Data Limite* (+60 dias).
-  - 🔴 **Pedido Não Pago** → exibe campos de *Número da Reserva* e *Canal de Atendimento* (Balcão, Whatsapp ou Telefone).
-- Escolha de **Local de Retirada** (Centro, Bancários ou Manaíra).
-- Campos para **nome do cliente**, **telefone** e **data limite personalizada**.
-- **Geração automática da etiqueta** na tela.
-- **Impressão otimizada** para impressoras térmicas (Elgin i8, Epson TM-T20, etc).
-- **Limpeza automática dos campos** após a impressão.
+> Sistema rápido e intuitivo para gerar e imprimir etiquetas de pedidos no **O Sebo Cultural**.  
+> Desenvolvido em HTML, CSS e JavaScript puro, otimizado para impressoras térmicas (Elgin i8, Epson TM-T20, etc).
 
 ---
 
-## 🖨️ Compatibilidade com Impressoras Térmicas
+## 🚀 Funcionalidades Principais
 
-O layout foi ajustado para impressoras de **80mm**, garantindo margens seguras e texto centralizado.  
+✅ **Status do Pedido**
+- **Pedido Pago** → Exibe *Número do Pedido* e calcula automaticamente a *Data Limite* (+60 dias).  
+- **Pedido Não Pago** → Exibe *Número da Reserva* e *Canal de Atendimento* (*Site, Balcão, Whatsapp, Telefone*).  
+  - Se o canal for **Site**, também exibe *Número do Pedido*.  
+- **Pedido EV/Amazon** → Exibe apenas *Número da Reserva*, *Número do Pedido* e *Data Limite*.  
+
+🏬 **Locais de Retirada**
+- Centro  
+- Bancários  
+- Manaíra  
+
+👤 **Informações do Cliente**
+- Nome, telefone e data limite (manual ou automática).
+
+🖨️ **Geração e Impressão**
+- Criação instantânea da etiqueta com visual limpo e profissional.  
+- Impressão otimizada para papel **80mm**, com margens ajustadas para diferentes modelos de impressoras.  
+- Limpeza automática dos campos após cada impressão.
+
+---
+
+## 🖨️ Compatibilidade com Impressoras
+
+Layout configurado para impressoras térmicas de **80mm**, com margens seguras e texto centralizado.  
+
 Testado com:
-
 - ✅ Elgin i8  
 - ✅ Epson TM-T20  
 
-> 💡 Caso a etiqueta saia cortada em algum modelo, é possível ajustar as margens no `style.css` no bloco `@media print`.
+💡 **Dica:** Se a etiqueta sair cortada em algum modelo, ajuste as margens no bloco `@media print` dentro do arquivo `style.css`.
 
 ---
 
-## 🛠️ Estrutura do Projeto
+## 🗂️ Estrutura do Projeto
 
-📂 gerador-etiquetas/
-├── index.html # Estrutura principal do formulário e etiqueta
-├── style.css # Estilos visuais e configuração de impressão
-├── script.js # Lógica de exibição, geração e impressão das etiquetas
-└── logoosebocultural.jpg # Logotipo exibido nas etiquetas
+```
+📦 gerador-etiquetas/
+├── index.html       # Estrutura principal do sistema
+├── style.css        # Estilos e configuração de impressão
+├── script.js        # Lógica de geração e comportamento dinâmico dos campos
+└── logoosebocultural.jpg  # Logotipo impresso nas etiquetas
+```
 
 ---
 
 ## ⚙️ Como Usar
 
-1. Baixe ou clone o repositório:
+1. **Clone ou baixe o repositório**
    ```bash
    git clone https://github.com/usuario/gerador-etiquetas.git
+   ```
+2. **Abra o arquivo** `index.html` no navegador.  
+3. **Preencha os dados** do pedido conforme o status selecionado.  
+4. Clique em **Gerar Etiqueta**.  
+5. Na janela de impressão:
+   - Selecione a impressora térmica.
+   - Papel: **80mm de largura**.
+   - Escala: **100%**.
+   - Margens: **Nenhuma** ou **Personalizada mínima**.
+6. Clique em **Imprimir** 🖨️
 
-2. Abra o arquivo index.html em qualquer navegador moderno.
-3. Preencha as informações do pedido.
-4. Clique em Gerar Etiqueta.
-5. Quando a janela de impressão abrir:
-    - Selecione sua impressora térmica.
-    - Configure o papel como 80mm de largura.
-    - Escala 100%.
-    - Margens: Nenhuma ou Personalizada mínima.
-6. Clique em Imprimir.
+---
 
-## 🧩 Tecnologias Utilizadas
+## 💻 Tecnologias Utilizadas
 
-| Tecnologia                      | Descrição                           |
-| ------------------------------- | ----------------------------------- |
-| 🧱 **HTML5**                    | Estrutura da aplicação              |
-| 🎨 **CSS3**                     | Estilo visual e regras de impressão |
-| ⚙️ **JavaScript (Vanilla ES6)** | Lógica funcional do sistema         |
+| Tecnologia | Descrição |
+|-------------|------------|
+| 🧱 **HTML5** | Estrutura da aplicação |
+| 🎨 **CSS3** | Estilo visual e otimização para impressão |
+| ⚙️ **JavaScript (Vanilla ES6)** | Lógica funcional e dinâmica do sistema |
 
-## 💬 Observações
+---
 
-- O campo “Canal de Atendimento” aparece somente quando o status é “Pedido Não Pago”.
-- A data limite é preenchida automaticamente apenas para pedidos pagos.
-- Após imprimir, todos os campos são limpos automaticamente para facilitar o próximo uso.
+## 🧩 Regras de Exibição dos Campos
+
+| Status | Campos exibidos |
+|--------|------------------|
+| **Pedido Pago** | Número do Pedido, Local de Retirada, Data Limite automática |
+| **Pedido Não Pago** | Número da Reserva, Canal de Atendimento |
+| **Pedido Não Pago (canal = Site)** | Número da Reserva, Canal de Atendimento, Número do Pedido |
+| **Pedido EV/Amazon** | Número da Reserva, Número do Pedido, Data Limite |
+
+---
+
+## 🪄 Customização
+
+Você pode ajustar o comportamento e o layout modificando:
+- `script.js` → para lógica de exibição e geração de etiqueta.  
+- `style.css` → para espaçamento e margens de impressão.  
+
+💡 **Dica:** Margens entre `6mm e 8mm` na esquerda funcionam bem para impressoras Epson e Elgin.
+
+---
 
 ## 📄 Licença
 
-Este projeto foi desenvolvido para uso interno do O Sebo Cultural.
-Você pode adaptar e reutilizar o código livremente, desde que mantenha os créditos.
+Este projeto foi desenvolvido para uso interno do **O Sebo Cultural**.  
+Pode ser adaptado e reutilizado livremente, mantendo os créditos originais.  
