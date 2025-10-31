@@ -9,9 +9,7 @@ const inputCliente = document.getElementById("cliente");
 const labelCliente = document.querySelector('label[for="cliente"]');
 const inputTelefone = document.getElementById("telefone");
 const labelTelefone = document.querySelector('label[for="telefone"]');
-const grupoLocal = document
-  .querySelectorAll('input[name="local"]')[0]
-  ?.closest(".checkbox-group");
+const grupoLocal = document.querySelectorAll('input[name="local"]')[0]?.closest(".checkbox-group");
 const labelLocal = document.querySelector('label:has(input[name="local"])');
 
 function calcularDataLimite(status) {
@@ -28,13 +26,15 @@ function atualizarStatus() {
 
   if (status === "pago") {
     campoReserva.style.display = "none";
-    campoCanal.style.display = "none";
-    campoPedido.style.display = "block";
+    campoCanal.style.display = "block"; // agora pedido pago também tem canal
+    campoPedido.style.display = "none";
     mostrarCamposCliente(true);
     mostrarCampoLocal(true);
     dataLimiteInput.value = calcularDataLimite(status);
     dataLimiteInput.readOnly = true;
-  } else if (status === "nao_pago") {
+    atualizarCanal(); // controla a exibição do número do pedido
+  } 
+  else if (status === "nao_pago") {
     campoReserva.style.display = "block";
     campoCanal.style.display = "block";
     campoPedido.style.display = "none";
@@ -44,7 +44,8 @@ function atualizarStatus() {
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
     atualizarCanal();
-  } else if (status === "ev_amazon") {
+  } 
+  else if (status === "ev_amazon") {
     campoReserva.style.display = "block";
     campoCanal.style.display = "none";
     campoPedido.style.display = "block";
@@ -70,22 +71,23 @@ function mostrarCampoLocal(visible) {
 
 function atualizarCanal() {
   const status = document.querySelector('input[name="status"]:checked').value;
-  const canalSelecionado = document.querySelector(
-    'input[name="canal"]:checked'
-  );
+  const canalSelecionado = document.querySelector('input[name="canal"]:checked');
   const canal = canalSelecionado ? canalSelecionado.value : "";
 
-  if (status === "nao_pago" && canal === "Site") {
+  // Regras para exibir ou esconder o número do pedido
+  if (
+    (status === "pago" && canal === "Site") ||
+    (status === "nao_pago" && canal === "Site") ||
+    status === "ev_amazon"
+  ) {
     campoPedido.style.display = "block";
-  } else if (status === "nao_pago") {
+  } else {
     campoPedido.style.display = "none";
   }
 }
 
 radiosStatus.forEach((r) => r.addEventListener("change", atualizarStatus));
-document
-  .querySelectorAll('input[name="canal"]')
-  .forEach((c) => c.addEventListener("change", atualizarCanal));
+document.querySelectorAll('input[name="canal"]').forEach((c) => c.addEventListener("change", atualizarCanal));
 atualizarStatus();
 
 function gerarEtiquetaHTML() {
@@ -116,14 +118,14 @@ function gerarEtiquetaHTML() {
   }
 
   if (
-    status === "pago" ||
+    (status === "pago" && canal === "Site") ||
     (status === "nao_pago" && canal === "Site") ||
     status === "ev_amazon"
   ) {
     etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido}</p>`;
   }
 
-  if (status === "nao_pago") {
+  if (status !== "ev_amazon") {
     etiquetaHTML += `<p><strong>Canal:</strong> ${canal}</p>`;
   }
 
@@ -152,9 +154,7 @@ function imprimirEtiqueta() {
 
   setTimeout(() => {
     document.querySelector('input[name="status"][value="pago"]').checked = true;
-    document.querySelector(
-      'input[name="local"][value="Centro"]'
-    ).checked = true;
+    document.querySelector('input[name="local"][value="Centro"]').checked = true;
     document.querySelector('input[name="canal"][value="Site"]').checked = true;
 
     ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
