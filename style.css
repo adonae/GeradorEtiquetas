@@ -99,7 +99,13 @@ button:hover {
   max-width: 90px;
 }
 
-/* ===== Estilo exclusivo para o grupo de status ===== */
+.logo-etiqueta {
+  display: block;
+  margin: 0 auto 8px auto;
+  max-width: 80px;
+}
+
+/* Estilo exclusivo para o grupo de status */
 .status-group {
   flex-direction: column !important;
   align-items: flex-start !important;
@@ -119,7 +125,7 @@ button:hover {
   }
 }
 
-/* ===== Modo de Impressão ===== */
+/* Modo de impressão */
 @media print {
   body {
     width: 80mm;
@@ -152,6 +158,6 @@ button:hover {
 
   @page {
     size: 80mm auto;
-    margin: 3mm 4mm 3mm 4mm; /* margem física da página aumentada no lado esquerdo */
+    margin: 3mm 4mm 3mm 4mm; /* Margem física da página aumentada no lado esquerdo */
   }
 }

@@ -3,21 +3,30 @@ const campoReserva = document.getElementById("campo-reserva");
 const campoPedido = document.getElementById("campo-pedido");
 const campoCanal = document.getElementById("campo-canal");
 const dataLimiteInput = document.getElementById("data-limite");
+const etiquetaDiv = document.getElementById("etiqueta");
+const botaoImprimir = document.getElementById("botao-imprimir");
+const logoTopo = document.getElementById("logo-topo");
 
-// Campos para controle de visibilidade
 const inputCliente = document.getElementById("cliente");
-const labelCliente = document.querySelector('label[for="cliente"]');
+const labelCliente = document.getElementById("label-cliente");
 const inputTelefone = document.getElementById("telefone");
-const labelTelefone = document.querySelector('label[for="telefone"]');
-const grupoLocal = document.querySelectorAll('input[name="local"]')[0]?.closest(".checkbox-group");
-const labelLocal = document.querySelector('label:has(input[name="local"])');
+const labelTelefone = document.getElementById("label-telefone");
+const grupoLocal =
+  document.querySelector('input[name="local"]')?.closest(".checkbox-group");
+const labelLocal = document.getElementById("label-local");
+
+let limpezaPendenteAposImpressao = false;
+
+logoTopo.src = LOGO_DATA_URL;
 
 function calcularDataLimite(status) {
   const hoje = new Date();
+
   if (status === "pago") {
     hoje.setDate(hoje.getDate() + 60);
     return hoje.toLocaleDateString("pt-BR");
   }
+
   return "";
 }
 
@@ -26,15 +35,18 @@ function atualizarStatus() {
 
   if (status === "pago") {
     campoReserva.style.display = "none";
-    campoCanal.style.display = "block"; // agora pedido pago também tem canal
+    campoCanal.style.display = "block";
     campoPedido.style.display = "none";
     mostrarCamposCliente(true);
     mostrarCampoLocal(true);
     dataLimiteInput.value = calcularDataLimite(status);
     dataLimiteInput.readOnly = true;
-    atualizarCanal(); // controla a exibição do número do pedido
-  } 
-  else if (status === "nao_pago") {
+    dataLimiteInput.placeholder = "";
+    atualizarCanal();
+    return;
+  }
+
+  if (status === "nao_pago") {
     campoReserva.style.display = "block";
     campoCanal.style.display = "block";
     campoPedido.style.display = "none";
@@ -44,29 +56,34 @@ function atualizarStatus() {
     dataLimiteInput.readOnly = false;
     dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
     atualizarCanal();
-  } 
-  else if (status === "ev_amazon") {
-    campoReserva.style.display = "block";
-    campoCanal.style.display = "none";
-    campoPedido.style.display = "block";
-    mostrarCamposCliente(false);
-    mostrarCampoLocal(true);
-    dataLimiteInput.value = "";
-    dataLimiteInput.readOnly = false;
-    dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
+    return;
   }
+
+  campoReserva.style.display = "block";
+  campoCanal.style.display = "none";
+  campoPedido.style.display = "block";
+  mostrarCamposCliente(false);
+  mostrarCampoLocal(true);
+  dataLimiteInput.value = "";
+  dataLimiteInput.readOnly = false;
+  dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
 }
 
 function mostrarCamposCliente(visible) {
   inputCliente.style.display = visible ? "block" : "none";
   inputTelefone.style.display = visible ? "block" : "none";
-  if (labelCliente) labelCliente.style.display = visible ? "block" : "none";
-  if (labelTelefone) labelTelefone.style.display = visible ? "block" : "none";
+  labelCliente.style.display = visible ? "block" : "none";
+  labelTelefone.style.display = visible ? "block" : "none";
 }
 
 function mostrarCampoLocal(visible) {
-  if (grupoLocal) grupoLocal.style.display = visible ? "flex" : "none";
-  if (labelLocal) labelLocal.style.display = visible ? "block" : "none";
+  if (grupoLocal) {
+    grupoLocal.style.display = visible ? "flex" : "none";
+  }
+
+  if (labelLocal) {
+    labelLocal.style.display = visible ? "block" : "none";
+  }
 }
 
 function atualizarCanal() {
@@ -74,21 +91,17 @@ function atualizarCanal() {
   const canalSelecionado = document.querySelector('input[name="canal"]:checked');
   const canal = canalSelecionado ? canalSelecionado.value : "";
 
-  // Regras para exibir ou esconder o número do pedido
   if (
     (status === "pago" && canal === "Site") ||
     (status === "nao_pago" && canal === "Site") ||
     status === "ev_amazon"
   ) {
     campoPedido.style.display = "block";
-  } else {
-    campoPedido.style.display = "none";
+    return;
   }
-}
 
-radiosStatus.forEach((r) => r.addEventListener("change", atualizarStatus));
-document.querySelectorAll('input[name="canal"]').forEach((c) => c.addEventListener("change", atualizarCanal));
-atualizarStatus();
+  campoPedido.style.display = "none";
+}
 
 function gerarEtiquetaHTML() {
   const status = document.querySelector('input[name="status"]:checked').value;
@@ -100,18 +113,22 @@ function gerarEtiquetaHTML() {
   const local = localEl ? localEl.value : "";
   const cliente = document.getElementById("cliente").value.trim();
   const telefone = document.getElementById("telefone").value.trim();
-  const dataLimite = document.getElementById("data-limite").value.trim();
+  const dataLimite = dataLimiteInput.value.trim();
 
   let etiquetaHTML = `
-      <img src="./logoosebocultural.jpg" style="max-width:80px; margin:auto; display:block;">
-      <p><strong>Status:</strong> ${
-        status === "pago"
-          ? "Pedido Pago"
-          : status === "nao_pago"
+    <img
+      src="${LOGO_DATA_URL}"
+      alt="Logo O Sebo Cultural"
+      class="logo-etiqueta"
+    >
+    <p><strong>Status:</strong> ${
+      status === "pago"
+        ? "Pedido Pago"
+        : status === "nao_pago"
           ? "Pedido Não Pago"
           : "Pedido EV/Amazon"
-      }</p>
-    `;
+    }</p>
+  `;
 
   if (reserva && (status === "nao_pago" || status === "ev_amazon")) {
     etiquetaHTML += `<p><strong>Reserva:</strong> ${reserva}</p>`;
@@ -122,7 +139,7 @@ function gerarEtiquetaHTML() {
     (status === "nao_pago" && canal === "Site") ||
     status === "ev_amazon"
   ) {
-    etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido}</p>`;
+    etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido || "-"}</p>`;
   }
 
   if (status !== "ev_amazon") {
@@ -133,47 +150,99 @@ function gerarEtiquetaHTML() {
 
   if (status !== "ev_amazon") {
     etiquetaHTML += `
-      <p><strong>Cliente:</strong> ${cliente}</p>
-      <p><strong>Telefone:</strong> ${telefone}</p>
+      <p><strong>Cliente:</strong> ${cliente || "-"}</p>
+      <p><strong>Telefone:</strong> ${telefone || "-"}</p>
     `;
   }
 
   etiquetaHTML += `<p><strong>Data Limite:</strong> ${dataLimite || "-"}</p>`;
+
   return etiquetaHTML;
 }
 
 function gerarEtiqueta() {
-  const etiquetaDiv = document.getElementById("etiqueta");
   etiquetaDiv.innerHTML = gerarEtiquetaHTML();
   etiquetaDiv.style.display = "block";
 }
 
-function imprimirEtiqueta() {
-  gerarEtiqueta();
-  window.print();
+async function aguardarImagensDaEtiqueta() {
+  const imagens = Array.from(etiquetaDiv.querySelectorAll("img"));
 
-  setTimeout(() => {
-    document.querySelector('input[name="status"][value="pago"]').checked = true;
-    document.querySelector('input[name="local"][value="Centro"]').checked = true;
-    document.querySelector('input[name="canal"][value="Site"]').checked = true;
+  await Promise.all(
+    imagens.map(async (imagem) => {
+      if (imagem.complete && imagem.naturalWidth > 0) {
+        if (typeof imagem.decode === "function") {
+          try {
+            await imagem.decode();
+          } catch (error) {
+            // Mantém a impressão mesmo se o decode falhar após o carregamento.
+          }
+        }
 
-    ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
-      const el = document.getElementById(id);
-      if (el) el.value = "";
-    });
+        return;
+      }
 
-    dataLimiteInput.value = "";
-    dataLimiteInput.readOnly = true;
-    dataLimiteInput.placeholder = "Selecione o status primeiro";
-
-    campoReserva.style.display = "none";
-    campoCanal.style.display = "none";
-    campoPedido.style.display = "block";
-
-    const etiquetaDiv = document.getElementById("etiqueta");
-    etiquetaDiv.innerHTML = "";
-    etiquetaDiv.style.display = "none";
-
-    atualizarStatus();
-  }, 1000);
+      await new Promise((resolve, reject) => {
+        imagem.addEventListener("load", resolve, { once: true });
+        imagem.addEventListener(
+          "error",
+          () => reject(new Error("A logo da etiqueta não carregou.")),
+          { once: true }
+        );
+      });
+    })
+  );
 }
+
+function limparFormularioAposImpressao() {
+  if (!limpezaPendenteAposImpressao) {
+    return;
+  }
+
+  document.querySelector('input[name="status"][value="pago"]').checked = true;
+  document.querySelector('input[name="local"][value="Centro"]').checked = true;
+  document.querySelector('input[name="canal"][value="Balcão"]').checked = true;
+
+  ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
+    const elemento = document.getElementById(id);
+
+    if (elemento) {
+      elemento.value = "";
+    }
+  });
+
+  dataLimiteInput.value = "";
+  dataLimiteInput.readOnly = true;
+  dataLimiteInput.placeholder = "Selecione o status primeiro";
+
+  etiquetaDiv.innerHTML = "";
+  etiquetaDiv.style.display = "none";
+
+  limpezaPendenteAposImpressao = false;
+  atualizarStatus();
+}
+
+async function imprimirEtiqueta() {
+  gerarEtiqueta();
+
+  try {
+    await aguardarImagensDaEtiqueta();
+    limpezaPendenteAposImpressao = true;
+    window.print();
+  } catch (error) {
+    console.error(error);
+    alert(
+      "A logo da etiqueta ainda não carregou. Aguarde um instante e tente imprimir novamente."
+    );
+  }
+}
+
+window.addEventListener("afterprint", limparFormularioAposImpressao);
+
+radiosStatus.forEach((radio) => radio.addEventListener("change", atualizarStatus));
+document
+  .querySelectorAll('input[name="canal"]')
+  .forEach((radio) => radio.addEventListener("change", atualizarCanal));
+botaoImprimir.addEventListener("click", imprimirEtiqueta);
+
+atualizarStatus();

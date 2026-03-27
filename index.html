@@ -12,35 +12,47 @@
     <title>Gerador de Etiquetas - O Sebo Cultural</title>
   </head>
   <body>
-    <img
-      src="./logoosebocultural.jpg"
-      alt="Logo O Sebo Cultural"
-      class="logo-topo"
-    />
+    <img alt="Logo O Sebo Cultural" class="logo-topo" id="logo-topo" />
 
     <div class="formulario">
-      <label>Status do Pedido:</label>
+      <label for="status-pago">Status do Pedido:</label>
       <div class="checkbox-group status-group">
         <div class="linha-status">
-          <label
-            ><input type="radio" name="status" value="pago" checked /> Pedido
-            Pago</label
-          >
-          <label
-            ><input type="radio" name="status" value="nao_pago" /> Pedido Não
-            Pago</label
-          >
+          <label>
+            <input
+              type="radio"
+              id="status-pago"
+              name="status"
+              value="pago"
+              checked
+            />
+            Pedido Pago
+          </label>
+          <label>
+            <input
+              type="radio"
+              id="status-nao-pago"
+              name="status"
+              value="nao_pago"
+            />
+            Pedido Não Pago
+          </label>
         </div>
         <div class="linha-status">
-          <label
-            ><input type="radio" name="status" value="ev_amazon" /> Pedido
-            EV/Amazon</label
-          >
+          <label>
+            <input
+              type="radio"
+              id="status-ev-amazon"
+              name="status"
+              value="ev_amazon"
+            />
+            Pedido EV/Amazon
+          </label>
         </div>
       </div>
 
       <div id="campo-reserva" style="display: none">
-        <label>Número da Reserva:</label>
+        <label for="reserva">Número da Reserva:</label>
         <input
           type="text"
           id="reserva"
@@ -48,9 +60,8 @@
         />
       </div>
 
-      <!-- Campo do número do pedido -->
       <div id="campo-pedido">
-        <label>Número do Pedido:</label>
+        <label for="pedido">Número do Pedido:</label>
         <input
           type="text"
           id="pedido"
@@ -58,55 +69,91 @@
         />
       </div>
 
-      <!-- Canal de Atendimento -->
       <div id="campo-canal" style="display: none">
-        <label>Canal de Atendimento:</label>
+        <label for="canal-balcao">Canal de Atendimento:</label>
         <div class="checkbox-group">
-          <label
-            ><input type="radio" name="canal" value="Balcão" checked />
-            Balcão</label
-          >
-          <label><input type="radio" name="canal" value="Site" /> Site</label>
-          <label
-            ><input type="radio" name="canal" value="Whatsapp" />
-            Whatsapp</label
-          >
-          <label
-            ><input type="radio" name="canal" value="Telefone" />
-            Telefone</label
-          >
+          <label>
+            <input
+              type="radio"
+              id="canal-balcao"
+              name="canal"
+              value="Balcão"
+              checked
+            />
+            Balcão
+          </label>
+          <label>
+            <input type="radio" id="canal-site" name="canal" value="Site" />
+            Site
+          </label>
+          <label>
+            <input
+              type="radio"
+              id="canal-whatsapp"
+              name="canal"
+              value="Whatsapp"
+            />
+            Whatsapp
+          </label>
+          <label>
+            <input
+              type="radio"
+              id="canal-telefone"
+              name="canal"
+              value="Telefone"
+            />
+            Telefone
+          </label>
         </div>
       </div>
 
-      <label>Local de Retirada:</label>
+      <label for="local-centro" id="label-local">Local de Retirada:</label>
       <div class="checkbox-group">
-        <label
-          ><input type="radio" name="local" value="Centro" checked />
-          Centro</label
-        >
-        <label
-          ><input type="radio" name="local" value="Bancários" />
-          Bancários</label
-        >
-        <label
-          ><input type="radio" name="local" value="Manaíra" /> Manaíra</label
-        >
+        <label>
+          <input
+            type="radio"
+            id="local-centro"
+            name="local"
+            value="Centro"
+            checked
+          />
+          Centro
+        </label>
+        <label>
+          <input
+            type="radio"
+            id="local-bancarios"
+            name="local"
+            value="Bancários"
+          />
+          Bancários
+        </label>
+        <label>
+          <input
+            type="radio"
+            id="local-manaira"
+            name="local"
+            value="Manaíra"
+          />
+          Manaíra
+        </label>
       </div>
 
-      <label>Nome do Cliente:</label>
+      <label for="cliente" id="label-cliente">Nome do Cliente:</label>
       <input type="text" id="cliente" placeholder="Digite o nome do cliente" />
 
-      <label>Telefone:</label>
+      <label for="telefone" id="label-telefone">Telefone:</label>
       <input type="text" id="telefone" placeholder="(DDD) 9XXXX-XXXX" />
 
-      <label>Data Limite para Retirada:</label>
+      <label for="data-limite">Data Limite para Retirada:</label>
       <input type="text" id="data-limite" readonly />
 
-      <button onclick="imprimirEtiqueta()">Gerar Etiqueta</button>
+      <button type="button" id="botao-imprimir">Gerar Etiqueta</button>
     </div>
+
     <div class="etiqueta" id="etiqueta"></div>
 
-    <!-- Script externo -->
+    <script src="logo-data.js"></script>
     <script src="script.js"></script>
   </body>
 </html>
