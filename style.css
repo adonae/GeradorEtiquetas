@@ -5,12 +5,6 @@ body {
   padding: 10px;
 }
 
-img {
-  display: block;
-  margin: 0 auto 8px auto;
-  max-width: 90px;
-}
-
 label {
   font-weight: bold;
   display: block;
@@ -79,8 +73,17 @@ button {
   border-radius: 4px;
 }
 
-button:hover {
-  background-color: #555;
+#botao-imprimir:hover {
+  background-color: #2e7d32;
+}
+
+#botao-limpar {
+  margin-top: 5px;
+  background-color: #666;
+}
+
+#botao-limpar:hover {
+  background-color: #c62828;
 }
 
 .etiqueta {
@@ -105,6 +108,10 @@ button:hover {
   max-width: 80px;
 }
 
+.u-hidden {
+  display: none !important;
+}
+
 /* Estilo exclusivo para o grupo de status */
 .status-group {
   flex-direction: column !important;
@@ -118,14 +125,6 @@ button:hover {
   gap: 12px;
 }
 
-/* Esconde a logo do topo durante a impressão */
-@media print {
-  .logo-topo {
-    display: none !important;
-  }
-}
-
-/* Modo de impressão */
 @media print {
   body {
     width: 80mm;
@@ -136,7 +135,6 @@ button:hover {
 
   .formulario,
   button,
-  h1,
   .logo-topo {
     display: none !important;
   }
@@ -149,11 +147,9 @@ button:hover {
     word-wrap: break-word;
   }
 
-  img {
-    margin-bottom: 4px;
+  .logo-etiqueta {
     display: block;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto 4px auto;
   }
 
   @page {

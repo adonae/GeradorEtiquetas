@@ -15,6 +15,7 @@
     <img alt="Logo O Sebo Cultural" class="logo-topo" id="logo-topo" />
 
     <div class="formulario">
+      <form id="formulario">
       <label for="status-pago">Status do Pedido:</label>
       <div class="checkbox-group status-group">
         <div class="linha-status">
@@ -51,7 +52,7 @@
         </div>
       </div>
 
-      <div id="campo-reserva" style="display: none">
+      <div id="campo-reserva" class="u-hidden">
         <label for="reserva">Número da Reserva:</label>
         <input
           type="text"
@@ -69,7 +70,7 @@
         />
       </div>
 
-      <div id="campo-canal" style="display: none">
+      <div id="campo-canal" class="u-hidden">
         <label for="canal-balcao">Canal de Atendimento:</label>
         <div class="checkbox-group">
           <label>
@@ -149,6 +150,8 @@
       <input type="text" id="data-limite" readonly />
 
       <button type="button" id="botao-imprimir">Gerar Etiqueta</button>
+      <button type="button" id="botao-limpar">Limpar Campos</button>
+      </form>
     </div>
 
     <div class="etiqueta" id="etiqueta"></div>

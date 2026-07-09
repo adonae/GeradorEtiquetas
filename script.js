@@ -1,248 +1,345 @@
-const radiosStatus = Array.from(document.getElementsByName("status"));
-const campoReserva = document.getElementById("campo-reserva");
-const campoPedido = document.getElementById("campo-pedido");
-const campoCanal = document.getElementById("campo-canal");
-const dataLimiteInput = document.getElementById("data-limite");
-const etiquetaDiv = document.getElementById("etiqueta");
-const botaoImprimir = document.getElementById("botao-imprimir");
-const logoTopo = document.getElementById("logo-topo");
+'use strict';
 
-const inputCliente = document.getElementById("cliente");
-const labelCliente = document.getElementById("label-cliente");
-const inputTelefone = document.getElementById("telefone");
-const labelTelefone = document.getElementById("label-telefone");
+// ---------------------------------------------------------------------------
+// Constantes
+// ---------------------------------------------------------------------------
+
+/**
+ * Configuração data-driven da visibilidade dos campos do formulário.
+ * Cada status define: label exibido na etiqueta, quais campos mostrar,
+ * tipo de data limite (auto = calculada, manual = editável),
+ * dataLimiteDias (dias a somar na data atual quando for 'auto'),
+ * e condição para exibir campo Pedido (função que recebe o canal).
+ */
+const STATUS_CONFIG = Object.freeze({
+  pago: {
+    label: 'Pedido Pago',
+    mostrarReserva: false,
+    mostrarCanal: true,
+    mostrarCliente: true,
+    mostrarLocal: true,
+    dataLimiteTipo: 'auto',
+    dataLimiteDias: 60,
+    mostrarPedido: (canal) => canal === 'Site',
+  },
+  nao_pago: {
+    label: 'Pedido Não Pago',
+    mostrarReserva: true,
+    mostrarCanal: true,
+    mostrarCliente: true,
+    mostrarLocal: true,
+    dataLimiteTipo: 'auto',
+    dataLimiteDias: 5,
+    mostrarPedido: (canal) => canal === 'Site',
+  },
+  ev_amazon: {
+    label: 'Pedido EV/Amazon',
+    mostrarReserva: true,
+    mostrarCanal: false,
+    mostrarCliente: false,
+    mostrarLocal: true,
+    dataLimiteTipo: 'manual',
+    dataLimiteDias: 0,
+    mostrarPedido: () => true,
+  },
+});
+
+// ---------------------------------------------------------------------------
+// Referências DOM
+// ---------------------------------------------------------------------------
+
+const campoReserva = document.getElementById('campo-reserva');
+const campoPedido = document.getElementById('campo-pedido');
+const campoCanal = document.getElementById('campo-canal');
+const dataLimiteInput = document.getElementById('data-limite');
+const etiquetaDiv = document.getElementById('etiqueta');
+const botaoImprimir = document.getElementById('botao-imprimir');
+const botaoLimpar = document.getElementById('botao-limpar');
+const logoTopo = document.getElementById('logo-topo');
+const inputCliente = document.getElementById('cliente');
+const labelCliente = document.getElementById('label-cliente');
+const inputTelefone = document.getElementById('telefone');
+const labelTelefone = document.getElementById('label-telefone');
 const grupoLocal =
-  document.querySelector('input[name="local"]')?.closest(".checkbox-group");
-const labelLocal = document.getElementById("label-local");
+  document.querySelector('input[name="local"]')?.closest('.checkbox-group');
+const labelLocal = document.getElementById('label-local');
 
-let limpezaPendenteAposImpressao = false;
+// ---------------------------------------------------------------------------
+// Inicialização
+// ---------------------------------------------------------------------------
 
 logoTopo.src = LOGO_DATA_URL;
 
-function calcularDataLimite(status) {
-  const hoje = new Date();
+// ---------------------------------------------------------------------------
+// Funções auxiliares
+// ---------------------------------------------------------------------------
 
-  if (status === "pago") {
-    hoje.setDate(hoje.getDate() + 60);
-    return hoje.toLocaleDateString("pt-BR");
-  }
-
-  return "";
+/** @returns {string} Valor do status selecionado ('pago', 'nao_pago' ou 'ev_amazon') */
+function getStatus() {
+  return document.querySelector('input[name="status"]:checked')?.value ?? 'pago';
 }
 
-function atualizarStatus() {
-  const status = document.querySelector('input[name="status"]:checked').value;
+/** @returns {string} Valor do canal selecionado ou string vazia */
+function getCanal() {
+  const el = document.querySelector('input[name="canal"]:checked');
+  return el ? el.value : '';
+}
 
-  if (status === "pago") {
-    campoReserva.style.display = "none";
-    campoCanal.style.display = "block";
-    campoPedido.style.display = "none";
-    mostrarCamposCliente(true);
-    mostrarCampoLocal(true);
-    dataLimiteInput.value = calcularDataLimite(status);
+/** @returns {string} Valor do local selecionado ou string vazia */
+function getLocal() {
+  const el = document.querySelector('input[name="local"]:checked');
+  return el ? el.value : '';
+}
+
+/** Retorna a data atual somada a `dias` no formato pt-BR */
+function calcularDataLimite(dias) {
+  const data = new Date();
+  data.setDate(data.getDate() + dias);
+  return data.toLocaleDateString('pt-BR');
+}
+
+/** Exibe os campos de cliente e telefone */
+function exibirCamposCliente() {
+  inputCliente.classList.remove('u-hidden');
+  inputTelefone.classList.remove('u-hidden');
+  labelCliente.classList.remove('u-hidden');
+  labelTelefone.classList.remove('u-hidden');
+}
+
+/** Oculta os campos de cliente e telefone */
+function ocultarCamposCliente() {
+  inputCliente.classList.add('u-hidden');
+  inputTelefone.classList.add('u-hidden');
+  labelCliente.classList.add('u-hidden');
+  labelTelefone.classList.add('u-hidden');
+}
+
+/** Exibe o campo de local de retirada */
+function exibirCampoLocal() {
+  grupoLocal?.classList.remove('u-hidden');
+  labelLocal?.classList.remove('u-hidden');
+}
+
+/** Oculta o campo de local de retirada */
+function ocultarCampoLocal() {
+  grupoLocal?.classList.add('u-hidden');
+  labelLocal?.classList.add('u-hidden');
+}
+
+// ---------------------------------------------------------------------------
+// Atualização dinâmica do formulário
+// ---------------------------------------------------------------------------
+
+/** Recalcula a visibilidade de todos os campos com base no status e canal */
+function atualizarFormulario() {
+  const status = getStatus();
+  const canal = getCanal();
+  const config = STATUS_CONFIG[status];
+
+  campoReserva.classList.toggle('u-hidden', !config.mostrarReserva);
+  campoCanal.classList.toggle('u-hidden', !config.mostrarCanal);
+
+  const mostrarPedido = config.mostrarPedido(canal);
+  campoPedido.classList.toggle('u-hidden', !mostrarPedido);
+
+  if (config.mostrarCliente) {
+    exibirCamposCliente();
+  } else {
+    ocultarCamposCliente();
+  }
+
+  if (config.mostrarLocal) {
+    exibirCampoLocal();
+  } else {
+    ocultarCampoLocal();
+  }
+
+  if (config.dataLimiteTipo === 'auto') {
+    dataLimiteInput.value = calcularDataLimite(config.dataLimiteDias);
     dataLimiteInput.readOnly = true;
-    dataLimiteInput.placeholder = "";
-    atualizarCanal();
-    return;
-  }
-
-  if (status === "nao_pago") {
-    campoReserva.style.display = "block";
-    campoCanal.style.display = "block";
-    campoPedido.style.display = "none";
-    mostrarCamposCliente(true);
-    mostrarCampoLocal(true);
-    dataLimiteInput.value = "";
+    dataLimiteInput.placeholder = '';
+  } else {
+    dataLimiteInput.value = '';
     dataLimiteInput.readOnly = false;
-    dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
-    atualizarCanal();
-    return;
-  }
-
-  campoReserva.style.display = "block";
-  campoCanal.style.display = "none";
-  campoPedido.style.display = "block";
-  mostrarCamposCliente(false);
-  mostrarCampoLocal(true);
-  dataLimiteInput.value = "";
-  dataLimiteInput.readOnly = false;
-  dataLimiteInput.placeholder = "Digite a data limite (ex: 20/10/2025)";
-}
-
-function mostrarCamposCliente(visible) {
-  inputCliente.style.display = visible ? "block" : "none";
-  inputTelefone.style.display = visible ? "block" : "none";
-  labelCliente.style.display = visible ? "block" : "none";
-  labelTelefone.style.display = visible ? "block" : "none";
-}
-
-function mostrarCampoLocal(visible) {
-  if (grupoLocal) {
-    grupoLocal.style.display = visible ? "flex" : "none";
-  }
-
-  if (labelLocal) {
-    labelLocal.style.display = visible ? "block" : "none";
+    dataLimiteInput.placeholder = 'Digite a data limite (ex: 20/10/2025)';
   }
 }
 
-function atualizarCanal() {
-  const status = document.querySelector('input[name="status"]:checked').value;
-  const canalSelecionado = document.querySelector('input[name="canal"]:checked');
-  const canal = canalSelecionado ? canalSelecionado.value : "";
+// ---------------------------------------------------------------------------
+// Geração segura da etiqueta (sem XSS — usa createElement e textContent)
+// ---------------------------------------------------------------------------
 
-  if (
-    (status === "pago" && canal === "Site") ||
-    (status === "nao_pago" && canal === "Site") ||
-    status === "ev_amazon"
-  ) {
-    campoPedido.style.display = "block";
-    return;
-  }
-
-  campoPedido.style.display = "none";
-}
-
+/** Constrói o HTML da etiqueta usando createElement para evitar injeção XSS */
 function gerarEtiquetaHTML() {
-  const status = document.querySelector('input[name="status"]:checked').value;
-  const reserva = document.getElementById("reserva").value.trim();
-  const pedido = document.getElementById("pedido").value.trim();
-  const canalEl = document.querySelector('input[name="canal"]:checked');
-  const canal = canalEl ? canalEl.value : "";
-  const localEl = document.querySelector('input[name="local"]:checked');
-  const local = localEl ? localEl.value : "";
-  const cliente = document.getElementById("cliente").value.trim();
-  const telefone = document.getElementById("telefone").value.trim();
+  const status = getStatus();
+  const canal = getCanal();
+  const local = getLocal();
+  const reserva = document.getElementById('reserva').value.trim();
+  const pedido = document.getElementById('pedido').value.trim();
+  const cliente = document.getElementById('cliente').value.trim();
+  const telefone = document.getElementById('telefone').value.trim();
   const dataLimite = dataLimiteInput.value.trim();
+  const config = STATUS_CONFIG[status];
 
-  let etiquetaHTML = `
-    <img
-      src="${LOGO_DATA_URL}"
-      alt="Logo O Sebo Cultural"
-      class="logo-etiqueta"
-    >
-    <p><strong>Status:</strong> ${
-      status === "pago"
-        ? "Pedido Pago"
-        : status === "nao_pago"
-          ? "Pedido Não Pago"
-          : "Pedido EV/Amazon"
-    }</p>
-  `;
+  const div = document.createElement('div');
 
-  if (reserva && (status === "nao_pago" || status === "ev_amazon")) {
-    etiquetaHTML += `<p><strong>Reserva:</strong> ${reserva}</p>`;
+  function adicionarParagrafo(rotulo, valor) {
+    const p = document.createElement('p');
+    const strong = document.createElement('strong');
+    strong.textContent = rotulo + ': ';
+    p.appendChild(strong);
+    p.appendChild(document.createTextNode(valor || '-'));
+    div.appendChild(p);
   }
 
-  if (
-    (status === "pago" && canal === "Site") ||
-    (status === "nao_pago" && canal === "Site") ||
-    status === "ev_amazon"
-  ) {
-    etiquetaHTML += `<p><strong>Pedido:</strong> ${pedido || "-"}</p>`;
+  // Logo — img segura (src fixo do sistema)
+  const img = document.createElement('img');
+  img.src = LOGO_DATA_URL;
+  img.alt = 'Logo O Sebo Cultural';
+  img.className = 'logo-etiqueta';
+  div.appendChild(img);
+
+  // Status
+  adicionarParagrafo('Status', config.label);
+
+  // Reserva
+  if (reserva && config.mostrarReserva) {
+    adicionarParagrafo('Reserva', reserva);
   }
 
-  if (status !== "ev_amazon") {
-    etiquetaHTML += `<p><strong>Canal:</strong> ${canal}</p>`;
+  // Pedido
+  if (config.mostrarPedido(canal)) {
+    adicionarParagrafo('Pedido', pedido || '-');
   }
 
-  etiquetaHTML += `<p><strong>Local:</strong> ${local}</p>`;
-
-  if (status !== "ev_amazon") {
-    etiquetaHTML += `
-      <p><strong>Cliente:</strong> ${cliente || "-"}</p>
-      <p><strong>Telefone:</strong> ${telefone || "-"}</p>
-    `;
+  // Canal
+  if (config.mostrarCanal) {
+    adicionarParagrafo('Canal', canal);
   }
 
-  etiquetaHTML += `<p><strong>Data Limite:</strong> ${dataLimite || "-"}</p>`;
+  // Local
+  adicionarParagrafo('Local', local);
 
-  return etiquetaHTML;
+  // Cliente e Telefone
+  if (config.mostrarCliente) {
+    adicionarParagrafo('Cliente', cliente || '-');
+    adicionarParagrafo('Telefone', telefone || '-');
+  }
+
+  // Data Limite
+  adicionarParagrafo('Data Limite', dataLimite || '-');
+
+  return div.innerHTML;
 }
 
+/** Renderiza a etiqueta no DOM */
 function gerarEtiqueta() {
   etiquetaDiv.innerHTML = gerarEtiquetaHTML();
-  etiquetaDiv.style.display = "block";
+  etiquetaDiv.style.display = 'block';
 }
 
+// ---------------------------------------------------------------------------
+// Aguardar carregamento de imagens antes da impressão
+// ---------------------------------------------------------------------------
+
+/** Aguarda que todas as imagens da etiqueta estejam carregadas */
 async function aguardarImagensDaEtiqueta() {
-  const imagens = Array.from(etiquetaDiv.querySelectorAll("img"));
+  const imagens = Array.from(etiquetaDiv.querySelectorAll('img'));
 
   await Promise.all(
     imagens.map(async (imagem) => {
       if (imagem.complete && imagem.naturalWidth > 0) {
-        if (typeof imagem.decode === "function") {
+        if (typeof imagem.decode === 'function') {
           try {
             await imagem.decode();
-          } catch (error) {
-            // Mantém a impressão mesmo se o decode falhar após o carregamento.
+          } catch (_) {
+            // decode pode falhar mesmo após carregamento — ignora
           }
         }
-
         return;
       }
 
       await new Promise((resolve, reject) => {
-        imagem.addEventListener("load", resolve, { once: true });
+        imagem.addEventListener('load', resolve, { once: true });
         imagem.addEventListener(
-          "error",
-          () => reject(new Error("A logo da etiqueta não carregou.")),
-          { once: true }
+          'error',
+          () => reject(new Error('A logo da etiqueta não carregou.')),
+          { once: true },
         );
       });
-    })
+    }),
   );
 }
 
-function limparFormularioAposImpressao() {
-  if (!limpezaPendenteAposImpressao) {
-    return;
-  }
+// ---------------------------------------------------------------------------
+// Impressão
+// ---------------------------------------------------------------------------
 
-  document.querySelector('input[name="status"][value="pago"]').checked = true;
-  document.querySelector('input[name="local"][value="Centro"]').checked = true;
-  document.querySelector('input[name="canal"][value="Balcão"]').checked = true;
+/** Evita cliques duplos no botão imprimir enquanto a impressão está aberta */
+let impressaoEmAndamento = false;
 
-  ["reserva", "pedido", "cliente", "telefone"].forEach((id) => {
-    const elemento = document.getElementById(id);
-
-    if (elemento) {
-      elemento.value = "";
-    }
-  });
-
-  dataLimiteInput.value = "";
-  dataLimiteInput.readOnly = true;
-  dataLimiteInput.placeholder = "Selecione o status primeiro";
-
-  etiquetaDiv.innerHTML = "";
-  etiquetaDiv.style.display = "none";
-
-  limpezaPendenteAposImpressao = false;
-  atualizarStatus();
-}
-
+/** Gera a etiqueta, aguarda as imagens e abre a janela de impressão */
 async function imprimirEtiqueta() {
+  if (impressaoEmAndamento) return;
+  impressaoEmAndamento = true;
+
   gerarEtiqueta();
 
   try {
     await aguardarImagensDaEtiqueta();
-    limpezaPendenteAposImpressao = true;
     window.print();
   } catch (error) {
     console.error(error);
     alert(
-      "A logo da etiqueta ainda não carregou. Aguarde um instante e tente imprimir novamente."
+      'A logo da etiqueta ainda não carregou. Aguarde um instante e tente imprimir novamente.',
     );
+  } finally {
+    impressaoEmAndamento = false;
   }
 }
 
-window.addEventListener("afterprint", limparFormularioAposImpressao);
+// ---------------------------------------------------------------------------
+// Limpar formulário (acionado pelo botão "Limpar Campos")
+// ---------------------------------------------------------------------------
 
-radiosStatus.forEach((radio) => radio.addEventListener("change", atualizarStatus));
+/** Restaura o formulário ao estado inicial e limpa a etiqueta */
+function limparFormulario() {
+  document.querySelector('input[name="status"][value="pago"]').checked = true;
+  document.querySelector('input[name="local"][value="Centro"]').checked = true;
+  document.querySelector('input[name="canal"][value="Balcão"]').checked = true;
+
+  ['reserva', 'pedido', 'cliente', 'telefone'].forEach((id) => {
+    const el = document.getElementById(id);
+    if (el) el.value = '';
+  });
+
+  dataLimiteInput.value = '';
+  dataLimiteInput.readOnly = true;
+  dataLimiteInput.placeholder = 'Selecione o status primeiro';
+
+  etiquetaDiv.innerHTML = '';
+  etiquetaDiv.style.display = 'none';
+
+  atualizarFormulario();
+}
+
+// ---------------------------------------------------------------------------
+// Registro de eventos
+// ---------------------------------------------------------------------------
+
+document
+  .querySelectorAll('input[name="status"]')
+  .forEach((radio) => radio.addEventListener('change', atualizarFormulario));
+
 document
   .querySelectorAll('input[name="canal"]')
-  .forEach((radio) => radio.addEventListener("change", atualizarCanal));
-botaoImprimir.addEventListener("click", imprimirEtiqueta);
+  .forEach((radio) => radio.addEventListener('change', atualizarFormulario));
 
-atualizarStatus();
+botaoImprimir.addEventListener('click', imprimirEtiqueta);
+botaoLimpar.addEventListener('click', limparFormulario);
+
+// ---------------------------------------------------------------------------
+// Estado inicial
+// ---------------------------------------------------------------------------
+
+atualizarFormulario();
