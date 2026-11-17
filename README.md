@@ -5,12 +5,13 @@ Desenvolvido em HTML, CSS e JavaScript puro, otimizado para impressoras térmica
 
 ## Funcionalidades principais
 
-- **Pedido Pago**: calcula automaticamente a data limite para retirada em 60 dias.
-- **Pedido Não Pago**: exibe número da reserva, canal de atendimento e, se o canal for `Site`, também o número do pedido.
-- **Pedido EV/Amazon**: exibe número da reserva, número do pedido e data limite.
+- **Pedido Pago**: calcula automaticamente a data limite para retirada em 60 dias e não exibe o campo de reserva.
+- **Pedido Não Pago**: exibe número da reserva, canal de atendimento e número do pedido (disponível para os canais Site, Balcão, Whatsapp e Telefone).
+- **Pedido EV/Amazon**: exibe apenas número da reserva, número do pedido e local de retirada.
 - **Locais de retirada**: Centro, Bancários e Manaíra.
 - **Dados do cliente**: nome, telefone e data limite.
 - **Impressão térmica**: layout ajustado para papel de 80 mm.
+- **Interface moderna e responsiva**: formulário em cartão, seleções em chips e pré-visualização da etiqueta na tela.
 - **Modo offline**: a logo é incorporada em base64 no arquivo `logo-data.js`, evitando falhas por carregamento externo.
 
 ## Estrutura do projeto

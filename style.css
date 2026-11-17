@@ -1,138 +1,412 @@
-body {
-  font-family: Arial, sans-serif;
-  max-width: 80mm;
-  margin: auto;
-  padding: 10px;
+/* ---------------------------------------------------------------------------
+   Tema
+   --------------------------------------------------------------------------- */
+
+:root {
+  color-scheme: light;
+
+  --bg: #f4f0ef;
+  --surface: #ffffff;
+  --surface-soft: #f6f8fa;
+  --text: #12252c;
+  --muted: #5f7078;
+  --border: #dbe3e8;
+  --border-strong: #c4d0d7;
+
+  --brand: #b91c1c;
+  --brand-strong: #7f1d1d;
+  --brand-soft: #fdeeee;
+
+  --radius-sm: 10px;
+  --radius-lg: 22px;
+
+  --shadow-sm: 0 1px 2px rgba(16, 35, 43, 0.06);
+  --shadow-md: 0 24px 48px -32px rgba(16, 35, 43, 0.45);
+
+  --font: "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial,
+    sans-serif;
 }
 
+* {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  min-height: 100vh;
+  margin: 0;
+  padding: 24px 16px 40px;
+  font-family: var(--font);
+  color: var(--text);
+  background:
+    radial-gradient(900px 500px at 10% -10%, #f0d9d9 0%, transparent 60%),
+    radial-gradient(700px 500px at 110% 10%, #e9e2d2 0%, transparent 55%),
+    var(--bg);
+}
+
+.app {
+  width: 100%;
+  max-width: 560px;
+}
+
+/* ---------------------------------------------------------------------------
+   Cabeçalho
+   --------------------------------------------------------------------------- */
+
+.app-header {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 14px;
+  padding: 18px 20px;
+  background: linear-gradient(135deg, #ffffff 0%, #f7fbfa 100%);
+  border: 1px solid rgba(185, 28, 28, 0.16);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+.logo-topo {
+  flex: none;
+  width: 54px;
+  height: 54px;
+  border-radius: 14px;
+  object-fit: cover;
+  box-shadow: var(--shadow-sm);
+}
+
+.app-header h1 {
+  margin: 0 0 2px;
+  font-size: 1.15rem;
+  letter-spacing: -0.01em;
+}
+
+.app-header p {
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--muted);
+}
+
+/* ---------------------------------------------------------------------------
+   Cartão do formulário
+   --------------------------------------------------------------------------- */
+
+.formulario {
+  padding: 20px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+}
+
+/* ---------------------------------------------------------------------------
+   Rótulos e campos de texto
+   --------------------------------------------------------------------------- */
+
 label {
-  font-weight: bold;
   display: block;
-  margin-top: 8px;
+  margin: 16px 0 6px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+#formulario > label:first-of-type {
+  margin-top: 0;
 }
 
 input[type="text"] {
   width: 100%;
-  padding: 5px;
-  margin-top: 4px;
-  box-sizing: border-box;
-  font-size: 14px;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 0.92rem;
+  color: var(--text);
+  background: var(--surface-soft);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  transition:
+    border-color 0.18s ease,
+    box-shadow 0.18s ease,
+    background-color 0.18s ease;
 }
 
-/* Grupo de seleções */
+input[type="text"]::placeholder {
+  color: #92a1a8;
+}
+
+input[type="text"]:hover {
+  border-color: var(--border-strong);
+}
+
+input[type="text"]:focus {
+  outline: none;
+  background: #fff;
+  border-color: var(--brand);
+  box-shadow: 0 0 0 4px rgba(185, 28, 28, 0.14);
+}
+
+input[type="text"][readonly] {
+  color: var(--muted);
+  background: #eef2f4;
+  cursor: default;
+}
+
+/* ---------------------------------------------------------------------------
+   Seleções em formato de "chips"
+   --------------------------------------------------------------------------- */
+
 .checkbox-group {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
   margin-top: 8px;
 }
 
 .checkbox-group label {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  font-size: 14px;
-  white-space: nowrap;
-  font-weight: normal;
+  gap: 8px;
+  margin: 0;
+  padding: 9px 13px;
+  font-size: 0.86rem;
+  font-weight: 600;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease,
+    transform 0.18s ease;
 }
 
-/* Quadradinhos personalizados */
+.checkbox-group label:hover {
+  border-color: var(--brand);
+  background: var(--brand-soft);
+}
+
+.checkbox-group label:has(input:checked) {
+  color: var(--brand-strong);
+  background: var(--brand-soft);
+  border-color: var(--brand);
+  box-shadow: inset 0 0 0 1px var(--brand);
+}
+
+.checkbox-group label:active {
+  transform: scale(0.98);
+}
+
+/* Radio circular moderno */
 input[type="radio"] {
   appearance: none;
   -webkit-appearance: none;
-  -moz-appearance: none;
-  width: 16px;
-  height: 16px;
-  border: 2px solid #555;
-  border-radius: 3px;
-  display: inline-block;
-  position: relative;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  background: #fff;
+  border: 2px solid var(--border-strong);
+  border-radius: 50%;
   cursor: pointer;
-  background-color: white;
-  transition: all 0.2s ease-in-out;
-}
-
-input[type="radio"]:checked {
-  background-color: #007bff;
-  border-color: #007bff;
+  transition:
+    border-color 0.18s ease,
+    background-color 0.18s ease,
+    box-shadow 0.18s ease;
 }
 
 input[type="radio"]:hover {
-  border-color: #007bff;
+  border-color: var(--brand);
+}
+
+input[type="radio"]:checked {
+  background: var(--brand);
+  border-color: var(--brand);
+  box-shadow: inset 0 0 0 3px #fff;
+}
+
+input[type="radio"]:focus-visible {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+
+/* Grupo de status: uma opção por linha, ocupando a largura disponível */
+.status-group {
+  flex-direction: column;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.linha-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.linha-status label {
+  flex: 1 1 160px;
+}
+
+/* ---------------------------------------------------------------------------
+   Botões
+   --------------------------------------------------------------------------- */
+
+.acoes {
+  display: grid;
+  gap: 10px;
+  margin-top: 22px;
 }
 
 button {
-  margin-top: 15px;
   width: 100%;
-  padding: 8px;
-  background-color: #333;
-  color: #fff;
-  border: none;
+  padding: 13px 16px;
+  font: inherit;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  border: 0;
+  border-radius: var(--radius-sm);
   cursor: pointer;
-  font-size: 14px;
-  border-radius: 4px;
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    background-color 0.15s ease,
+    color 0.15s ease,
+    border-color 0.15s ease;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button:focus-visible {
+  outline: 3px solid rgba(185, 28, 28, 0.35);
+  outline-offset: 2px;
+}
+
+#botao-imprimir {
+  color: #fff;
+  background: linear-gradient(135deg, #dc2626 0%, #991b1b 100%);
+  box-shadow: 0 12px 24px -14px rgba(153, 27, 27, 0.9);
 }
 
 #botao-imprimir:hover {
-  background-color: #2e7d32;
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px -14px rgba(153, 27, 27, 0.85);
 }
 
 #botao-limpar {
-  margin-top: 5px;
-  background-color: #666;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid var(--border);
 }
 
 #botao-limpar:hover {
-  background-color: #c62828;
+  color: var(--text);
+  background: var(--surface-soft);
+  border-color: var(--border-strong);
 }
+
+/* ---------------------------------------------------------------------------
+   Pré-visualização da etiqueta
+   --------------------------------------------------------------------------- */
 
 .etiqueta {
   display: none;
+  margin-top: 16px;
+  padding: 18px;
   font-size: 13px;
-  line-height: 1.4;
+  line-height: 1.5;
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
 }
 
 .etiqueta p {
-  margin: 2px 0;
-}
-
-.logo-topo {
-  display: block;
-  margin: 0 auto 8px auto;
-  max-width: 90px;
+  margin: 4px 0;
 }
 
 .logo-etiqueta {
   display: block;
-  margin: 0 auto 8px auto;
   max-width: 80px;
+  margin: 0 auto 12px;
+  border-radius: 12px;
 }
+
+/* ---------------------------------------------------------------------------
+   Utilitários
+   --------------------------------------------------------------------------- */
 
 .u-hidden {
   display: none !important;
 }
 
-/* Estilo exclusivo para o grupo de status */
-.status-group {
-  flex-direction: column !important;
-  align-items: flex-start !important;
-  gap: 4px;
+/* ---------------------------------------------------------------------------
+   Ajustes para telas pequenas
+   --------------------------------------------------------------------------- */
+
+@media (max-width: 430px) {
+  body {
+    padding: 16px 12px 32px;
+  }
+
+  .app-header,
+  .formulario,
+  .etiqueta {
+    padding: 16px;
+    border-radius: 18px;
+  }
+
+  .linha-status label {
+    flex: 1 1 100%;
+  }
 }
 
-.status-group .linha-status {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+  }
 }
+
+/* ---------------------------------------------------------------------------
+   Impressão — mantém o layout de 80 mm da impressora térmica
+   --------------------------------------------------------------------------- */
 
 @media print {
+  @page {
+    size: 80mm auto;
+    margin: 3mm 4mm 3mm 4mm; /* Margem física da página aumentada no lado esquerdo */
+  }
+
   body {
+    display: block;
     width: 80mm;
     max-width: 80mm;
     margin: 0 auto;
     padding: 5mm 6mm 5mm 4mm; /* Aumenta o espaço interno à esquerda */
+    color: #000;
+    background: none !important;
   }
 
+  .app {
+    width: auto;
+    max-width: none;
+  }
+
+  .app-header,
   .formulario,
   button,
   .logo-topo {
@@ -141,19 +415,19 @@ button {
 
   .etiqueta {
     display: block;
+    margin: 0;
     padding: 2mm 4mm 2mm 3mm; /* Recuo adicional à esquerda */
     font-size: 20px;
     line-height: 1.4;
     word-wrap: break-word;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
   }
 
   .logo-etiqueta {
     display: block;
     margin: 0 auto 4px auto;
-  }
-
-  @page {
-    size: 80mm auto;
-    margin: 3mm 4mm 3mm 4mm; /* Margem física da página aumentada no lado esquerdo */
+    border-radius: 0;
   }
 }

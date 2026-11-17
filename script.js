@@ -5,11 +5,23 @@
 // ---------------------------------------------------------------------------
 
 /**
+ * Canais de atendimento em que o número do pedido pode ser informado.
+ * Para os demais canais o campo Pedido fica oculto.
+ */
+const CANAIS_COM_PEDIDO = Object.freeze([
+  'Site',
+  'Balcão',
+  'Whatsapp',
+  'Telefone',
+]);
+
+/**
  * Configuração data-driven da visibilidade dos campos do formulário.
- * Cada status define: label exibido na etiqueta, quais campos mostrar,
- * tipo de data limite (auto = calculada, manual = editável),
- * dataLimiteDias (dias a somar na data atual quando for 'auto'),
- * e condição para exibir campo Pedido (função que recebe o canal).
+ * Cada status define: label exibido na etiqueta, quais campos mostrar
+ * (reserva, canal, cliente, local e data limite), tipo de data limite
+ * (auto = calculada, manual = editável), dataLimiteDias (dias a somar na
+ * data atual quando for 'auto') e condição para exibir campo Pedido
+ * (função que recebe o canal).
  */
 const STATUS_CONFIG = Object.freeze({
   pago: {
@@ -18,9 +30,10 @@ const STATUS_CONFIG = Object.freeze({
     mostrarCanal: true,
     mostrarCliente: true,
     mostrarLocal: true,
+    mostrarDataLimite: true,
     dataLimiteTipo: 'auto',
     dataLimiteDias: 60,
-    mostrarPedido: (canal) => canal === 'Site',
+    mostrarPedido: (canal) => CANAIS_COM_PEDIDO.includes(canal),
   },
   nao_pago: {
     label: 'Pedido Não Pago',
@@ -28,9 +41,10 @@ const STATUS_CONFIG = Object.freeze({
     mostrarCanal: true,
     mostrarCliente: true,
     mostrarLocal: true,
+    mostrarDataLimite: true,
     dataLimiteTipo: 'auto',
     dataLimiteDias: 5,
-    mostrarPedido: (canal) => canal === 'Site',
+    mostrarPedido: (canal) => CANAIS_COM_PEDIDO.includes(canal),
   },
   ev_amazon: {
     label: 'Pedido EV/Amazon',
@@ -38,6 +52,7 @@ const STATUS_CONFIG = Object.freeze({
     mostrarCanal: false,
     mostrarCliente: false,
     mostrarLocal: true,
+    mostrarDataLimite: false,
     dataLimiteTipo: 'manual',
     dataLimiteDias: 0,
     mostrarPedido: () => true,
@@ -52,6 +67,7 @@ const campoReserva = document.getElementById('campo-reserva');
 const campoPedido = document.getElementById('campo-pedido');
 const campoCanal = document.getElementById('campo-canal');
 const dataLimiteInput = document.getElementById('data-limite');
+const labelDataLimite = document.getElementById('label-data-limite');
 const etiquetaDiv = document.getElementById('etiqueta');
 const botaoImprimir = document.getElementById('botao-imprimir');
 const botaoLimpar = document.getElementById('botao-limpar');
@@ -154,6 +170,9 @@ function atualizarFormulario() {
     ocultarCampoLocal();
   }
 
+  dataLimiteInput.classList.toggle('u-hidden', !config.mostrarDataLimite);
+  labelDataLimite.classList.toggle('u-hidden', !config.mostrarDataLimite);
+
   if (config.dataLimiteTipo === 'auto') {
     dataLimiteInput.value = calcularDataLimite(config.dataLimiteDias);
     dataLimiteInput.readOnly = true;
@@ -227,7 +246,9 @@ function gerarEtiquetaHTML() {
   }
 
   // Data Limite
-  adicionarParagrafo('Data Limite', dataLimite || '-');
+  if (config.mostrarDataLimite) {
+    adicionarParagrafo('Data Limite', dataLimite || '-');
+  }
 
   return div.innerHTML;
 }
